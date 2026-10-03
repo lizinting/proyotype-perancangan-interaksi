@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LittleSeed Plants - E-Commerce & Plant Care Companion</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Custom Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        sand: '#FAF8F5'
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #FAF8F5;
+            color: #1f2937;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#FAF8F5] text-slate-800">
+
+    <!-- Top Announcement Bar -->
+    <div class="bg-brand-900 text-white text-xs py-2 px-4 text-center font-medium flex justify-between items-center px-6">
+        <span class="hidden sm:inline">🌱 Promo Minggu Ini: Gratis Ongkir & Pot Terracotta untuk pembelian di atas Rp150.000!</span>
+        <span class="sm:hidden">🌱 Gratis Pot Terracotta kelipatan Rp150k!</span>
+        <a href="#quiz" onclick="openQuizModal()" class="underline hover:text-brand-200 transition">Coba Kuis Plant Match ✨</a>
+    </div>
+
+    <!-- Main Navigation -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-100 transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+            <!-- Logo -->
+            <div class="flex items-center gap-2 cursor-pointer" onclick="navigateTo('home')">
+                <div class="w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 font-bold text-xl">
+                    🌱
+                </div>
+                <div>
+                    <span class="text-xl font-extrabold tracking-tight text-slate-900">LittleSeed</span>
+                    <span class="text-xs block -mt-1 font-semibold text-brand-600">Plants & Care</span>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="flex-1 max-w-md hidden md:block relative">
+                <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="Cari tanaman (cth: Monstera, Sansevieria)..." 
+                    class="w-full pl-10 pr-4 py-2 text-sm rounded-full bg-slate-100 border-none focus:outline-none focus:ring-2 focus:ring-brand-500 transition">
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-3">
+                <button onclick="openQuizModal()" class="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold hover:bg-emerald-100 border border-emerald-200 transition">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-emerald-600"></i> Plant Match
+                </button>
+                <button onclick="navigateTo('tracker')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-slate-600 hover:text-brand-700 hover:bg-slate-100 text-xs font-semibold transition">
+                    <i data-lucide="calendar" class="w-4 h-4"></i>
+                    <span class="hidden md:inline">Care Reminder</span>
+                </button>
+                <button onclick="toggleCartModal()" class="relative p-2 rounded-full hover:bg-slate-100 text-slate-700 transition">
+                    <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                    <span id="cartBadge" class="absolute top-0 right-0 w-4 h-4 bg-emerald-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center hidden">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main id="mainContent" class="flex-grow">
+        <!-- Hero Section -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+            <div class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-brand-900 to-brand-800 text-white p-8 sm:p-12 flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl">
+                <div class="max-w-xl z-10">
+                    <span class="inline-block px-3 py-1 bg-white/10 backdrop-blur-md text-emerald-300 rounded-full text-xs font-semibold uppercase tracking-wider mb-4 border border-white/10">Solusi Bebas Frustrasi</span>
+                    <h1 class="text-3xl sm:text-5xl font-extrabold leading-tight mb-4">Temukan Tanaman Hias yang Cocok dengan Gaya Hidupmu.</h1>
+                    <p class="text-slate-200 text-sm sm:text-base mb-6 leading-relaxed">
+                        Bingung memilih tanaman yang aman untuk anabul, hemat waktu penyiraman, atau minim sinar matahari? Gunakan kuis interaktif dan panduan perawatan cerdas kami!
+                    </p>
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="openQuizModal()" class="px-6 py-3 bg-emerald-400 hover:bg-emerald-300 text-slate-900 font-bold rounded-xl shadow-lg transition flex items-center gap-2 text-sm">
+                            <i data-lucide="sparkles" class="w-4 h-4"></i> Coba Plant Match Quiz
+                        </button>
+                        <a href="#katalog" class="px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl backdrop-blur-md transition text-sm">
+                            Jelajahi Katalog
+                        </a>
+                    </div>
+                </div>
+                <div class="relative w-full md:w-80 h-64 md:h-80 flex justify-center items-center">
+                    <div class="absolute w-64 h-64 bg-emerald-500/20 rounded-full blur-2xl"></div>
+                    <img src="https://images.unsplash.com/photo-1545241047-6083a3684587?auto=format&fit=crop&w=600&q=80" alt="Plant collection" class="relative z-10 rounded-2xl object-cover h-full w-full shadow-2xl border-2 border-white/20" />
+                </div>
+            </div>
+        </section>
+
+        <!-- Catalog & Filter Section -->
+        <section id="katalog" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-slate-900">Katalog Tanaman LittleSeed</h2>
+                    <p class="text-slate-500 text-xs sm:text-sm">Filter cerdas berdasarkan cahaya, keamanan peliharaan, dan perawatan.</p>
+                </div>
+                <div class="flex items-center gap-3 w-full md:w-auto justify-between">
+                    <span id="productCount" class="text-xs font-medium text-slate-500">Menampilkan 6 tanaman</span>
+                    <select id="sortBy" onchange="applyFilters()" class="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        <option value="popular">Paling Populer</option>
+                        <option value="price-low">Harga: Terendah ke Tertinggi</option>
+                        <option value="price-high">Harga: Tertinggi ke Terendah</option>
+                        <option value="score">Compatibility Score Terbaik</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Advanced Filter Controls -->
+            <div class="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-200/80 mb-8">
+                <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Light requirement -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-2">☀️ Kebutuhan Cahaya</label>
+                        <select id="filterLight" onchange="applyFilters()" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-brand-500 outline-none">
+                            <option value="all">Semua Cahaya</option>
+                            <option value="Rendah">Cahaya Redup (Low Light)</option>
+                            <option value="Sedang">Cahaya Tidak Langsung (Medium)</option>
+                            <option value="Tinggi">Cahaya Terang (High Light)</option>
+                        </select>
+                    </div>
+
+                    <!-- Pet Safety -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-2">🐾 Keamanan Hewan Peliharaan</label>
+                        <select id="filterPet" onchange="applyFilters()" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-brand-500 outline-none">
+                            <option value="all">Semua</option>
+                            <option value="yes">Aman untuk Kucing/Anjing (Pet Friendly)</option>
+                            <option value="no">Perlu Pengawasan</option>
+                        </select>
+                    </div>
+
+                    <!-- Size -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-2">🪴 Ukuran Tanaman</label>
+                        <select id="filterSize" onchange="applyFilters()" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-brand-500 outline-none">
+                            <option value="all">Semua Ukuran</option>
+                            <option value="Kecil">Kecil (Desktop/Meja)</option>
+                            <option value="Sedang">Sedang (Rak/Lantai)</option>
+                            <option value="Besar">Besar (Sudut Ruangan)</option>
+                        </select>
+                    </div>
+
+                    <!-- Care Level -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-2">💧 Tingkat Perawatan</label>
+                        <select id="filterCare" onchange="applyFilters()" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-brand-500 outline-none">
+                            <option value="all">Semua Level</option>
+                            <option value="Pemula">Sangat Mudah (Pemula)</option>
+                            <option value="Sedang">Sedang (Teratur)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Active Filter Tags & Reset -->
+                <div class="mt-4 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
+                    <div class="flex items-center gap-2 text-xs text-slate-500">
+                        <i data-lucide="filter" class="w-3.5 h-3.5"></i>
+                        <span>Gunakan filter untuk mempersempit pilihan sesuai rumah Anda.</span>
+                    </div>
+                    <button onclick="resetFilters()" class="text-xs font-bold text-emerald-600 hover:text-emerald-800 underline">
+                        Reset Semua Filter
+                    </button>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Products dynamically rendered here -->
+            </div>
+        </section>
+
+        <!-- Community & Expert Tips Section -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="bg-emerald-900/5 rounded-3xl p-8 border border-emerald-900/10 flex flex-col md:flex-row items-center gap-8">
+                <div class="flex-1">
+                    <span class="text-xs font-extrabold text-brand-700 uppercase tracking-widest">Komunitas & Tips Berkebun</span>
+                    <h3 class="text-2xl font-bold text-slate-900 mt-2 mb-3">Punya Pertanyaan Perawatan Tanaman?</h3>
+                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                        Bergabunglah dengan forum kolektif LittleSeed! Dapatkan tips harian, tanyakan diagnosis daun kuning pada pakar botani kami, dan bagikan jurnal pertumbuhan tanamanmu.
+                    </p>
+                    <div class="flex gap-3">
+                        <button onclick="alert('Fitur Forum Komunitas LittleSeed akan segera hadir!')" class="px-4 py-2.5 bg-brand-700 text-white rounded-xl text-xs font-bold hover:bg-brand-800 transition">
+                            Diskusi dengan Pakar
+                        </button>
+                        <button onclick="navigateTo('tracker')" class="px-4 py-2.5 bg-white border border-slate-300 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 transition">
+                            Lihat Growth Tracker
+                        </button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 w-full md:w-auto">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 text-center shadow-sm">
+                        <div class="text-2xl font-black text-brand-600 mb-1">4.9/5</div>
+                        <div class="text-[11px] text-slate-500 font-medium">Tingkat Kelangsungan Hidup Tanaman</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 text-center shadow-sm">
+                        <div class="text-2xl font-black text-brand-600 mb-1">12k+</div>
+                        <div class="text-[11px] text-slate-500 font-medium">Pecinta Tanaman Bergabung</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- TRACKER PAGE VIEW (Dynamic Hide/Show) -->
+    <div id="trackerPage" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <button onclick="navigateTo('home')" class="text-xs font-bold text-brand-700 flex items-center gap-1 mb-2 hover:underline">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali ke Katalog
+                </button>
+                <h2 class="text-2xl font-extrabold text-slate-900">Smart Care Reminder & Growth Tracker</h2>
+                <p class="text-slate-500 text-xs sm:text-sm">Pantau jadwal penyiraman dan rekam jejak pertumbuhan koleksi tanamanmu.</p>
+            </div>
+            <button onclick="addCustomPlantToTracker()" class="px-4 py-2 bg-brand-700 text-white text-xs font-bold rounded-xl shadow hover:bg-brand-800 transition flex items-center gap-1.5">
+                <i data-lucide="plus" class="w-4 h-4"></i> Tambah Tanaman
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left: Reminders List -->
+            <div class="lg:col-span-2 space-y-4">
+                <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                    <i data-lucide="bell" class="w-4 h-4 text-emerald-600"></i> Jadwal Perawatan Minggu Ini
+                </h3>
+
+                <div id="trackerList" class="space-y-3">
+                    <!-- Dynamic Tracker items -->
+                </div>
+            </div>
+
+            <!-- Right: Growth Journal -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm h-fit">
+                <h3 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <i data-lucide="camera" class="w-4 h-4 text-emerald-600"></i> Catatan Perkembangan (Journal)
+                </h3>
+                
+                <div class="space-y-4 border-l-2 border-slate-200 pl-4">
+                    <div class="relative">
+                        <span class="w-3 h-3 bg-brand-500 rounded-full absolute -left-[23px] top-1 border-2 border-white"></span>
+                        <div class="text-xs font-bold text-slate-400">2 Hari lalu</div>
+                        <div class="text-xs font-bold text-slate-800 mt-0.5">Monstera Deliciosa</div>
+                        <p class="text-xs text-slate-600 mt-1">Tumbuh tunas baru di batang tengah! Warna hijau muda segar.</p>
+                    </div>
+                    <div class="relative">
+                        <span class="w-3 h-3 bg-slate-300 rounded-full absolute -left-[23px] top-1 border-2 border-white"></span>
+                        <div class="text-xs font-bold text-slate-400">1 Minggu lalu</div>
+                        <div class="text-xs font-bold text-slate-800 mt-0.5">Sansevieria Trifasciata</div>
+                        <p class="text-xs text-slate-600 mt-1">Selesai diberi pupuk organik cair. Kondisi daun kokoh.</p>
+                    </div>
+                </div>
+
+                <button onclick="alert('Fitur unggah foto pertumbuhan akan disimulasikan!')" class="w-full mt-6 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl border border-slate-200 transition">
+                    + Tambah Catatan Foto
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PLANT MATCH QUIZ MODAL -->
+    <div id="quizModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+            <button onclick="closeQuizModal()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- Quiz Step Header -->
+            <div class="mb-6">
+                <div class="flex justify-between items-center text-xs font-extrabold text-brand-700 mb-2">
+                    <span>PLANT MATCH QUIZ</span>
+                    <span id="quizStepIndicator">Langkah 1 dari 3</span>
+                </div>
+                <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                    <div id="quizProgressBar" class="bg-brand-500 h-full w-1/3 transition-all duration-300"></div>
+                </div>
+            </div>
+
+            <!-- Quiz Questions Container -->
+            <div id="quizContent">
+                <!-- Question 1 -->
+                <div id="q1" class="quiz-step">
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Bagaimana kondisi pencahayaan di ruangan Anda?</h3>
+                    <p class="text-xs text-slate-500 mb-4">Pencahayaan memengaruhi kesehatan dedaunan secara langsung.</p>
+                    <div class="space-y-2.5">
+                        <button onclick="selectQuizOption('light', 'Rendah')" class="w-full p-3 text-left border border-slate-200 rounded-xl hover:border-brand-500 hover:bg-emerald-50 transition text-xs font-semibold flex items-center gap-3">
+                            <span class="text-lg">🌑</span> Minim cahaya / Tidak ada jendela langsung
+                        </button>
+                        <button onclick="selectQuizOption('light', 'Sedang')" class="w-full p-3 text-left border border-slate-200 rounded-xl hover:border-brand-500 hover:bg-emerald-50 transition text-xs font-semibold flex items-center gap-3">
+                            <span class="text-lg">⛅</span> Cahaya tidak langsung (Terang/Samping Jendela)
+                        </button>
+                        <button onclick="selectQuizOption('light', 'Tinggi')" class="w-full p-3 text-left border border-slate-200 rounded-xl hover:border-brand-500 hover:bg-emerald-50 transition text-xs font-semibold flex items-center gap-3">
+                            <span class="text-lg">☀️</span> Terpapar sinar matahari langsung
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div id="q2" class="quiz-step hidden">
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Apakah Anda memelihara hewan (kucing/anjing)?</h3>
+                    <p class="text-xs text-slate-500 mb-4">Beberapa jenis tanaman hias bisa bersifat toksik jika tertelan anabul.</p>
+                    <div class="space-y-2.5">
+                        <button onclick="selectQuizOption('pet', 'yes')" class="w-full p-3 text-left border border-slate-200 rounded-xl hover:border-brand-500 hover:bg-emerald-50 transition text-xs font-semibold flex items-center gap-3">
+                            <span class="text-lg">🐱</span> Ya, butuh yang 100% Pet Friendly
+                        </button>
+                        <button onclick="selectQuizOption('pet', 'no')" class="w-full p-3 text-left border border-slate-200 rounded-xl hover:border-brand-500 hover:bg-emerald-50 transition text-xs font-semibold flex items-center gap-3">
+                            <span class="text-lg">🚫</span> Tidak ada hewan peliharaan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div id="q3" class="quiz-step hidden">
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Berapa intensitas waktu yang bisa Anda luangkan untuk menyiram?</h3>
+                    <p class="text-xs text-slate-500 mb-4">Kami akan menyesuaikan dengan tingkat ketahanan tanaman.</p>
+                    <div class="space-y-2.5">
+                        <button onclick="selectQuizOption('care', 'Pemula')" class="w-full p-3 text-left border border-slate-200 rounded-xl hover:border-brand-500 hover:bg-emerald-50 transition text-xs font-semibold flex items-center gap-3">
+                            <span class="text-lg">⏳</span> Sering bepergian / Kadang lupa menyiram (1-2x seminggu)
+                        </button>
+                        <button onclick="selectQuizOption('care', 'Sedang')" class="w-full p-3 text-left border border-slate-200 rounded-xl hover:border-brand-500 hover:bg-emerald-50 transition text-xs font-semibold flex items-center gap-3">
+                            <span class="text-lg">🌿</span> Rutin merawat tanaman (2-3x seminggu)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quiz Results -->
+                <div id="qResult" class="quiz-step hidden text-center">
+                    <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 mx-auto mb-3 text-2xl">
+                        ✨
+                    </div>
+                    <h3 class="text-xl font-extrabold text-slate-900 mb-1">Rekomendasi Terbaik Untukmu!</h3>
+                    <p class="text-xs text-slate-500 mb-4">Berdasarkan profil yang kamu masukkan, ini pilihan tanaman paling kompatibel:</p>
+
+                    <div id="recommendedPlantCard" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-6 text-left flex items-center gap-4">
+                        <!-- Dynamic Result Card -->
+                    </div>
+
+                    <button onclick="applyQuizResultFilter()" class="w-full py-3 bg-brand-700 hover:bg-brand-800 text-white rounded-xl text-xs font-bold transition shadow-lg">
+                        Tampilkan Semua Hasil Cocok
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRODUCT DETAIL MODAL -->
+    <div id="detailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeDetailModal()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 z-10">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div id="detailContent" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Content injected dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- CART SLIDE-OVER MODAL -->
+    <div id="cartModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 justify-end hidden flex">
+        <div class="bg-white w-full max-w-md h-full p-6 shadow-2xl flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                    <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                        <i data-lucide="shopping-bag" class="w-5 h-5 text-brand-700"></i> Keranjang Belanja
+                    </h3>
+                    <button onclick="toggleCartModal()" class="p-1 text-slate-400 hover:text-slate-600">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <!-- Cart Items List -->
+                <div id="cartList" class="py-4 space-y-4 max-h-[60vh] overflow-y-auto">
+                    <!-- Dynamic cart items -->
+                </div>
+            </div>
+
+            <!-- Cart Footer -->
+            <div class="pt-4 border-t border-slate-100">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-xs font-semibold text-slate-500">Total Pembayaran:</span>
+                    <span id="cartTotal" class="text-lg font-extrabold text-slate-900">Rp0</span>
+                </div>
+                <button onclick="checkout()" class="w-full py-3 bg-brand-700 hover:bg-brand-800 text-white font-bold text-xs rounded-xl transition shadow-md">
+                    Proses Checkout SEKARANG
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 border-t border-slate-800 mt-16 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="space-y-3">
+                <div class="flex items-center gap-2 text-white font-bold text-lg">
+                    🌱 LittleSeed
+                </div>
+                <p class="leading-relaxed">E-commerce tanaman hias ramah pengguna dengan fitur navigasi ringkas, rekomendasi kuis cerdas, dan pengingat perawatan tanaman.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-3">Navigasi Ringkas</h4>
+                <ul class="space-y-2">
+                    <li><a href="#katalog" class="hover:text-white transition">Katalog Tanaman</a></li>
+                    <li><a href="#quiz" onclick="openQuizModal()" class="hover:text-white transition">Plant Match Quiz</a></li>
+                    <li><a href="#" onclick="navigateTo('tracker')" class="hover:text-white transition">Smart Care Reminder</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-3">Solusi Masalah</h4>
+                <ul class="space-y-2">
+                    <li><span class="text-slate-400">✅ Navigasi Bebas Frustrasi</span></li>
+                    <li><span class="text-slate-400">✅ Fitur Compatibility Score</span></li>
+                    <li><span class="text-slate-400">✅ Filter Kebutuhan Cahaya & Pet-Friendly</span></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-3">Mini Design Process Project</h4>
+                <p>Dikembangkan berdasarkan Case Study LittleSeed Plants - Gather Requirement, Design, Prototype, Evaluation.</p>
+            </div>
+        </div>
+        <div class="border-t border-slate-800 py-4 text-center text-slate-500">
+            &copy; 2026 LittleSeed Plants Prototype. Telkom University Case Study.
+        </div>
+    </footer>
+
+    <script>
+        // DATA PRODUCT (Mock Database)
+        const products = [
+            {
+                id: 1,
+                name: "Monstera Deliciosa",
+                latinName: "Monstera deliciosa",
+                price: 125000,
+                rating: 4.8,
+                reviews: 142,
+                image: "https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&w=600&q=80",
+                light: "Sedang",
+                petFriendly: false,
+                size: "Sedang",
+                careLevel: "Pemula",
+                score: 95,
+                description: "Dikenal dengan daun berlubang unik yang megah. Sangat toleran pada kondisi dalam ruangan dan tumbuh subur dengan cahaya tidak langsung.",
+                wateringDays: 4
+            },
+            {
+                id: 2,
+                name: "Lidah Mertua (Snake Plant)",
+                latinName: "Sansevieria trifasciata",
+                price: 45000,
+                rating: 4.9,
+                reviews: 210,
+                image: "https://images.unsplash.com/photo-1593482892290-f54927ae1bac?auto=format&fit=crop&w=600&q=80",
+                light: "Rendah",
+                petFriendly: false,
+                size: "Kecil",
+                careLevel: "Pemula",
+                score: 98,
+                description: "Tanaman paling tangguh! Mampu menyaring udara kotor dan tetap bertahan meskipun jarang disiram.",
+                wateringDays: 10
+            },
+            {
+                id: 3,
+                name: "Peperomia Watermelon",
+                latinName: "Peperomia argyreia",
+                price: 65000,
+                rating: 4.7,
+                reviews: 88,
+                image: "https://images.unsplash.com/photo-1620127682229-33388276e540?auto=format&fit=crop&w=600&q=80",
+                light: "Sedang",
+                petFriendly: true,
+                size: "Kecil",
+                careLevel: "Pemula",
+                score: 92,
+                description: "Memiliki motif daun yang mirip sekali dengan semangka. 100% Aman untuk kucing dan anjing kesayangan Anda.",
+                wateringDays: 3
+            },
+            {
+                id: 4,
+                name: "Calathea Orbifolia",
+                latinName: "Goeppertia orbifolia",
+                price: 110000,
+                rating: 4.6,
+                reviews: 64,
+                image: "https://images.unsplash.com/photo-1592150621744-aca64f48394a?auto=format&fit=crop&w=600&q=80",
+                light: "Sedang",
+                petFriendly: true,
+                size: "Sedang",
+                careLevel: "Sedang",
+                score: 88,
+                description: "Daun berbentuk bundar lebar dengan garis-garis perak memikat. Membutuhkan kelembapan udara konstan.",
+                wateringDays: 2
+            },
+            {
+                id: 5,
+                name: "Pothos Hijau (Sirih Gading)",
+                latinName: "Epipremnum aureum",
+                price: 35000,
+                rating: 4.9,
+                reviews: 312,
+                image: "https://images.unsplash.com/photo-1596724826473-e8e11381d1c4?auto=format&fit=crop&w=600&q=80",
+                light: "Rendah",
+                petFriendly: false,
+                size: "Kecil",
+                careLevel: "Pemula",
+                score: 96,
+                description: "Tanaman gantung/rambat pemula terbaik. Cepat tumbuh dan menyesuaikan diri di sudut mana pun.",
+                wateringDays: 5
+            },
+            {
+                id: 6,
+                name: "Ficus Elastica (Rubber Tree)",
+                latinName: "Ficus elastica 'Decora'",
+                price: 135000,
+                rating: 4.8,
+                reviews: 95,
+                image: "https://images.unsplash.com/photo-1600411833196-7c1f6b1a8b90?auto=format&fit=crop&w=600&q=80",
+                light: "Tinggi",
+                petFriendly: false,
+                size: "Besar",
+                careLevel: "Pemula",
+                score: 90,
+                description: "Daun tebal mengkilap yang memberikan aksen modern dan mewah untuk sudut ruang tamu Anda.",
+                wateringDays: 6
+            }
+        ];
+
+        // APP STATE
+        let cart = [];
+        let quizAnswers = { light: null, pet: null, care: null };
+        let trackerPlants = [
+            { id: 1, name: "Monstera Deliciosa", nextWatering: "Besok", status: "Perlu Air" },
+            { id: 2, name: "Lidah Mertua", nextWatering: "Dalam 5 hari", status: "Sehat" }
+        ];
+
+        // INITIALIZATION
+        window.onload = function() {
+            lucide.createIcons();
+            renderProducts(products);
+            renderTracker();
+        };
+
+        // RENDER PRODUCTS
+        function renderProducts(items) {
+            const grid = document.getElementById('productGrid');
+            const count = document.getElementById('productCount');
+            count.innerText = `Menampilkan ${items.length} tanaman`;
+
+            if (items.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-12 text-center text-slate-400">
+                        <i data-lucide="package-search" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+                        <p class="font-bold text-slate-600">Tidak ada tanaman yang sesuai kriteria filter.</p>
+                        <p class="text-xs">Coba sesuaikan pilihan filter Anda di atas.</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            grid.innerHTML = items.map(p => `
+                <div class="bg-white rounded-2xl overflow-hidden border border-slate-200/80 hover:shadow-xl transition-all duration-300 flex flex-col group">
+                    <div class="relative h-56 bg-slate-100 overflow-hidden">
+                        <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+                        <div class="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[11px] font-extrabold text-emerald-700 flex items-center gap-1 shadow-sm">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Score: ${p.score}%
+                        </div>
+                        ${p.petFriendly ? `
+                            <div class="absolute top-3 right-3 bg-emerald-500 text-white p-1.5 rounded-full shadow-sm" title="Aman untuk Hewan Peliharaan">
+                                🐾
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="p-5 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="text-[11px] font-semibold text-slate-400 italic mb-1">${p.latinName}</div>
+                            <h3 class="text-base font-bold text-slate-900 group-hover:text-brand-700 transition">${p.name}</h3>
+
+                            <!-- Concise Tag Badges -->
+                            <div class="flex flex-wrap gap-1.5 my-3">
+                                <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md text-[10px] font-semibold">☀️ ${p.light}</span>
+                                <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md text-[10px] font-semibold">🪴 ${p.size}</span>
+                                <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md text-[10px] font-semibold">💧 Perawatan ${p.careLevel}</span>
+                            </div>
+                        </div>
+
+                        <div class="pt-3 border-t border-slate-100 flex items-center justify-between mt-2">
+                            <div>
+                                <span class="text-xs text-slate-400 block -mb-1">Harga</span>
+                                <span class="text-base font-extrabold text-slate-900">Rp${p.price.toLocaleString('id-ID')}</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="openDetailModal(${p.id})" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition">
+                                    Detail
+                                </button>
+                                <button onclick="addToCart(${p.id})" class="p-2 bg-brand-700 hover:bg-brand-800 text-white rounded-xl transition shadow-md">
+                                    <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        // FILTERING & SEARCHING
+        function applyFilters() {
+            const light = document.getElementById('filterLight').value;
+            const pet = document.getElementById('filterPet').value;
+            const size = document.getElementById('filterSize').value;
+            const care = document.getElementById('filterCare').value;
+            const sortBy = document.getElementById('sortBy').value;
+            const search = document.getElementById('searchInput').value.toLowerCase();
+
+            let filtered = products.filter(p => {
+                if (light !== 'all' && p.light !== light) return false;
+                if (pet === 'yes' && !p.petFriendly) return false;
+                if (pet === 'no' && p.petFriendly) return false;
+                if (size !== 'all' && p.size !== size) return false;
+                if (care !== 'all' && p.careLevel !== care) return false;
+                if (search && !p.name.toLowerCase().includes(search) && !p.latinName.toLowerCase().includes(search)) return false;
+                return true;
+            });
+
+            // Sorting
+            if (sortBy === 'price-low') filtered.sort((a,b) => a.price - b.price);
+            if (sortBy === 'price-high') filtered.sort((a,b) => b.price - a.price);
+            if (sortBy === 'score') filtered.sort((a,b) => b.score - a.score);
+
+            renderProducts(filtered);
+        }
+
+        function resetFilters() {
+            document.getElementById('filterLight').value = 'all';
+            document.getElementById('filterPet').value = 'all';
+            document.getElementById('filterSize').value = 'all';
+            document.getElementById('filterCare').value = 'all';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('sortBy').value = 'popular';
+            renderProducts(products);
+        }
+
+        function handleSearch(val) {
+            applyFilters();
+        }
+
+        // QUIZ LOGIC
+        function openQuizModal() {
+            document.getElementById('quizModal').classList.remove('hidden');
+            resetQuiz();
+        }
+
+        function closeQuizModal() {
+            document.getElementById('quizModal').classList.add('hidden');
+        }
+
+        function resetQuiz() {
+            quizAnswers = { light: null, pet: null, care: null };
+            document.getElementById('q1').classList.remove('hidden');
+            document.getElementById('q2').classList.add('hidden');
+            document.getElementById('q3').classList.add('hidden');
+            document.getElementById('qResult').classList.add('hidden');
+            document.getElementById('quizStepIndicator').innerText = "Langkah 1 dari 3";
+            document.getElementById('quizProgressBar').style.width = "33%";
+        }
+
+        function selectQuizOption(key, val) {
+            quizAnswers[key] = val;
+
+            if (key === 'light') {
+                document.getElementById('q1').classList.add('hidden');
+                document.getElementById('q2').classList.remove('hidden');
+                document.getElementById('quizStepIndicator').innerText = "Langkah 2 dari 3";
+                document.getElementById('quizProgressBar').style.width = "66%";
+            } else if (key === 'pet') {
+                document.getElementById('q2').classList.add('hidden');
+                document.getElementById('q3').classList.remove('hidden');
+                document.getElementById('quizStepIndicator').innerText = "Langkah 3 dari 3";
+                document.getElementById('quizProgressBar').style.width = "100%";
+            } else if (key === 'care') {
+                document.getElementById('q3').classList.add('hidden');
+                document.getElementById('qResult').classList.remove('hidden');
+                document.getElementById('quizStepIndicator').innerText = "Selesai!";
+                showQuizResult();
+            }
+        }
+
+        function showQuizResult() {
+            // Find best matching plant
+            let match = products.find(p => p.light === quizAnswers.light && p.careLevel === quizAnswers.care);
+            if (!match) match = products[0]; // Fallback
+
+            const card = document.getElementById('recommendedPlantCard');
+            card.innerHTML = `
+                <img src="${match.image}" class="w-20 h-20 rounded-xl object-cover" />
+                <div>
+                    <span class="text-[10px] font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">Kecocokan 98%</span>
+                    <h4 class="font-extrabold text-slate-900 text-sm mt-1">${match.name}</h4>
+                    <p class="text-xs text-slate-500 line-clamp-2 mt-0.5">${match.description}</p>
+                    <span class="text-xs font-bold text-slate-900 block mt-1">Rp${match.price.toLocaleString('id-ID')}</span>
+                </div>
+            `;
+        }
+
+        function applyQuizResultFilter() {
+            closeQuizModal();
+            if (quizAnswers.light) document.getElementById('filterLight').value = quizAnswers.light;
+            if (quizAnswers.pet === 'yes') document.getElementById('filterPet').value = 'yes';
+            if (quizAnswers.care) document.getElementById('filterCare').value = quizAnswers.care;
+            applyFilters();
+            window.location.hash = "#katalog";
+        }
+
+        // DETAIL MODAL LOGIC
+        function openDetailModal(id) {
+            const product = products.find(p => p.id === id);
+            const content = document.getElementById('detailContent');
+
+            content.innerHTML = `
+                <div class="h-64 md:h-full rounded-2xl overflow-hidden bg-slate-100 relative">
+                    <img src="${product.image}" class="w-full h-full object-cover" />
+                    <div class="absolute top-3 left-3 bg-brand-700 text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                        Compatibility Score: ${product.score}%
+                    </div>
+                </div>
+
+                <div class="flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs text-slate-400 italic">${product.latinName}</span>
+                        <h2 class="text-2xl font-extrabold text-slate-900 mb-2">${product.name}</h2>
+                        <div class="text-xl font-black text-brand-700 mb-4">Rp${product.price.toLocaleString('id-ID')}</div>
+
+                        <p class="text-xs text-slate-600 leading-relaxed mb-6">${product.description}</p>
+
+                        <!-- Clean Compact Specification List -->
+                        <div class="space-y-2.5 bg-slate-50 p-4 rounded-xl border border-slate-200/80 mb-6 text-xs">
+                            <div class="flex justify-between border-b border-slate-200/60 pb-1.5">
+                                <span class="text-slate-500">Cahaya</span>
+                                <span class="font-semibold text-slate-800">${product.light}</span>
+                            </div>
+                            <div class="flex justify-between border-b border-slate-200/60 pb-1.5">
+                                <span class="text-slate-500">Pet Friendly</span>
+                                <span class="font-semibold text-slate-800">${product.petFriendly ? 'Aman 🐾' : 'Perlu Pengawasan 🚫'}</span>
+                            </div>
+                            <div class="flex justify-between border-b border-slate-200/60 pb-1.5">
+                                <span class="text-slate-500">Jadwal Penyiraman</span>
+                                <span class="font-semibold text-slate-800">Setiap ${product.wateringDays} hari sekali</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">Tingkat Perawatan</span>
+                                <span class="font-semibold text-slate-800">${product.careLevel}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="addToCart(${product.id}); closeDetailModal();" class="w-full py-3 bg-brand-700 hover:bg-brand-800 text-white font-bold rounded-xl text-xs shadow-lg transition flex items-center justify-center gap-2">
+                        <i data-lucide="shopping-bag" class="w-4 h-4"></i> Tambahkan ke Keranjang
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('detailModal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+        }
+
+        // CART LOGIC
+        function toggleCartModal() {
+            document.getElementById('cartModal').classList.toggle('hidden');
+        }
+
+        function addToCart(id) {
+            const item = products.find(p => p.id === id);
+            cart.push(item);
+            updateCartUI();
+            
+            // Show Feedback
+            const badge = document.getElementById('cartBadge');
+            badge.classList.remove('hidden');
+        }
+
+        function updateCartUI() {
+            const list = document.getElementById('cartList');
+            const totalEl = document.getElementById('cartTotal');
+            const badge = document.getElementById('cartBadge');
+
+            badge.innerText = cart.length;
+            if (cart.length === 0) badge.classList.add('hidden');
+
+            if (cart.length === 0) {
+                list.innerHTML = `<div class="text-center py-8 text-xs text-slate-400">Keranjang masih kosong.</div>`;
+                totalEl.innerText = "Rp0";
+                return;
+            }
+
+            let total = 0;
+            list.innerHTML = cart.map((item, index) => {
+                total += item.price;
+                return `
+                    <div class="flex items-center justify-between gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200/60">
+                        <img src="${item.image}" class="w-12 h-12 rounded-lg object-cover" />
+                        <div class="flex-1">
+                            <h4 class="text-xs font-bold text-slate-800">${item.name}</h4>
+                            <span class="text-xs font-semibold text-brand-700">Rp${item.price.toLocaleString('id-ID')}</span>
+                        </div>
+                        <button onclick="removeFromCart(${index})" class="text-slate-400 hover:text-red-500 p-1">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+
+            totalEl.innerText = `Rp${total.toLocaleString('id-ID')}`;
+            lucide.createIcons();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                alert("Keranjang Anda masih kosong!");
+                return;
+            }
+            alert("Terima kasih! Pesanan Anda berhasil disimulasikan.");
+            cart = [];
+            updateCartUI();
+            toggleCartModal();
+        }
+
+        // NAVIGATION & TRACKER LOGIC
+        function navigateTo(page) {
+            if (page === 'tracker') {
+                document.getElementById('mainContent').classList.add('hidden');
+                document.getElementById('trackerPage').classList.remove('hidden');
+            } else {
+                document.getElementById('mainContent').classList.remove('hidden');
+                document.getElementById('trackerPage').classList.add('hidden');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderTracker() {
+            const container = document.getElementById('trackerList');
+            container.innerHTML = trackerPlants.map(p => `
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-lg">
+                            🪴
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-900">${p.name}</h4>
+                            <span class="text-xs text-slate-500">Jadwal siram berikutnya: <strong class="text-brand-700">${p.nextWatering}</strong></span>
+                        </div>
+                    </div>
+                    <button onclick="markWatered(this)" class="px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-xs font-bold rounded-lg transition border border-emerald-200">
+                        Sudah Disiram ✓
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function markWatered(btn) {
+            btn.innerText = "Selesai ✨";
+            btn.classList.remove('bg-emerald-50', 'text-emerald-700');
+            btn.classList.add('bg-slate-100', 'text-slate-400');
+            btn.disabled = true;
+        }
+
+        function addCustomPlantToTracker() {
+            const name = prompt("Masukkan nama tanaman baru Anda:");
+            if (name) {
+                trackerPlants.push({
+                    id: Date.now(),
+                    name: name,
+                    nextWatering: "Besok",
+                    status: "Baru"
+                });
+                renderTracker();
+            }
+        }
+    </script>
+</body>
+</html>
